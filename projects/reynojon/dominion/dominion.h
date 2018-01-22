@@ -128,4 +128,25 @@ int getWinners(int players[MAX_PLAYERS], struct gameState *state);
 /* Set array position of each player who won (remember ties!) to
    1, others to 0 */
 
+int playAdventurer(struct gameState *state, int currentPlayer);
+/* Look at top card of deck. If card is a treasure, add it to the current player's hand,
+	otherwise discard it. Repeat until 2 treasures are added to the current player'salvager
+	hand.	*/
+
+int playCouncilRoom(struct gameState *state, int currentPlayer, int handPos);
+/* Current player draws 4 cards and gains 1 buy. 
+	All other players draw 1 card	*/
+
+int playSmithy(struct gameState *state, int currentPlayer, int handPos);
+/* Current player draws 3 cards */
+
+int playSteward(struct gameState *state, int currentPlayer, int handPost, int choice1, int choice2, int choice3);
+/* Current player will gain 2 cards, 2 coins, or trash two cards.
+	The two cards trashed will be choice2 and choice3.
+*/
+ 
+ int playCutpurse(struct gameState *state, int currentPlayer, int handPos);
+ /* Each player other than the current player either discards a copper, 
+	or if the hand does not contain a copper, all cards in the hand are displayed */
+ 
 #endif
