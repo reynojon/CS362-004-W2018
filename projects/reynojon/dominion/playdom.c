@@ -5,6 +5,8 @@
 
 int main (int argc, char** argv) {
   struct gameState G;
+	
+	//Choose random starting cards
   int k[10] = {adventurer, gardens, embargo, village, minion, mine, cutpurse,
            sea_hag, tribute, smithy};
 
