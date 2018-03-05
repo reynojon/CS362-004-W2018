@@ -1,0 +1,23 @@
+Adventurer:
+
+From the test script, after an iteration:
+Adventurer card in hand position: 0
+....
+New card in adventurer's hand position: 7
+
+- Bug:
+After an iteration, the adventurer card remained in the current player's hand, which is not the proper action for a card. Any card played should be moved to the 'played' pile. When the card is moved to the played pile, the last card in the player's hand should be moved to fill the 'hole' left by the removed card.
+
+Council Room:
+The current player's hand size should increase by 3 (Draw 4 cards, place the council room in the 'played' pile, removing it from the hand). Each other player's hand size should also increase by 1 after drawing a card.
+
+The current player's hand size was incorrect after playing the council room on 9998 out of 10000 iterations. However, the test for other player's drawing a card failed only 88 times. Additionally, the cehck that the council room was placed in the played pile failed 0 times.
+
+- Bug
+The current player is not drawing the correct number of cards when playing the council room card
+
+Smithy:
+The current player's draw test and hand size tests failed 99-100% of the time.
+
+Bug:
+The current player is not drawing the correct number of cards.
