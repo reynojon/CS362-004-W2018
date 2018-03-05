@@ -128,7 +128,7 @@ int getWinners(int players[MAX_PLAYERS], struct gameState *state);
 /* Set array position of each player who won (remember ties!) to
    1, others to 0 */
 
-int playAdventurer(struct gameState *state, int currentPlayer);
+int playAdventurer(struct gameState *state, int currentPlayer, int handPos);
 /* Look at top card of deck. If card is a treasure, add it to the current player's hand,
 	otherwise discard it. Repeat until 2 treasures are added to the current player'salvager
 	hand.	*/
