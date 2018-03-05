@@ -117,8 +117,19 @@ int main()
 			}
 		}
 	  }
-      playCouncilRoom(&G, G.whoseTurn, randHandPos);  //Playing the card directly bypasses end of turn actions and any check for the card's existence
+	  
+	  /************************************************
+	  * Code for my refactored council room
+	  ************************************************/
+      //playCouncilRoom(&G, G.whoseTurn, randHandPos);  
+	  //Playing the card directly bypasses end of turn actions and any check for the card's existence
 
+	  /************************************************
+	  * Code for Cody Kelley's refactored council room
+	  ************************************************/
+	  int k;
+	  council_roomEffect(k, G.whoseTurn, &G, randHandPos); 
+	  
       //AFTER PLAYING COUNCIL ROOM
       
       //Player should have 4 new cards in hand (possibly undeterminable ahead of time)
