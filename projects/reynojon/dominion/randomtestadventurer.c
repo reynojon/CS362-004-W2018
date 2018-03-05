@@ -17,7 +17,7 @@
 #define NUM_TESTS 7 //Number of times assert functions are called per iteration
 
 void createRandomPiles(struct gameState *state, int discardMin, int discardMax, int deckMin, int deckMax);
-void findCoins(int *nonCoinsArray, int nonCoinsCap, int *coin1, int *coin2, struct gameState *state);
+void findCoins(int *nonCoinsArray, int *coin1, int *coin2, struct gameState *state);
 void countDiscardCoins(int *copperCount, int *silverCount, int *goldCount, struct gameState *state);
 void assertCoinDraw(int firstDraw, int secondDraw, int firstCoin, int secondCoin, int copperCount, 
                           int silverCount, int goldCount, int *testFailed, int *failArray, int failIndex);
@@ -81,6 +81,10 @@ int main() {
       
       //Put an adventurer card in hand at a random position
       randHandPos = rand() % G.handCount[G.whoseTurn];
+	  if(DEBUGGING)
+	  {
+		  printf("Adventurer card in hand position: %d\n", randHandPos);
+	  }
       G.hand[G.whoseTurn][randHandPos] = adventurer;
     
       //Record values prior to playing Adventurer card
@@ -91,7 +95,7 @@ int main() {
       initialHandCount = G.handCount[G.whoseTurn];
           
       //Check draw pile to find the coins which should be added to the hand (if they are in the pile)
-      findCoins(tempDeck, MAX_HAND - 1, &firstCoin, &secondCoin, &G);
+      findCoins(tempDeck, &firstCoin, &secondCoin, &G);
 
       //If 1 or fewer coins in draw pile, count all coins in discard pile
       if(secondCoin == -1)
@@ -110,7 +114,11 @@ int main() {
         }
       }
 
-      playAdventurer(&G, G.whoseTurn);  //Playing the card directly bypasses end of turn actions and any check for the card's existence
+	  /************************************************
+	  * Code for my refactored adventurer
+	  ************************************************/
+	  //Playing the card directly bypasses end of turn actions and any check for the card's existence
+      playAdventurer(&G, G.whoseTurn, randHandPos);  
 
       //AFTER PLAYING ADVENTURER
 
@@ -121,7 +129,11 @@ int main() {
       //Verify cards added to hand were actually coins and also available in the deck prior to draw
 	  testFailed = 0;
       assertCoinDraw(firstDraw, secondDraw, firstCoin, secondCoin, copperCount, silverCount, goldCount, &testFailed, failCount, 0);
-
+	  
+	  if(DEBUGGING)
+	  {
+		  printf("New card in adventurer's hand position: %d\n", G.hand[G.whoseTurn][randHandPos]);
+	  }
       //Verify the total number of cards available to the player did not change (except for adventurer being in played pile)
 	  testFailed = 0;
       assertCardCount(initialCardCount - 1, &G, &testFailed, failCount, 1);
@@ -215,7 +227,7 @@ void createRandomPiles(struct gameState *state, int discardMin, int discardMax, 
 // Stores the coin types of the first 2 cards in the deck in coin1 and coin2
 // If 2 coins are not found, -1 stored as the coin1 and/or coin2 values
 // Does not change the game state
-void findCoins(int *nonCoinsArray, int nonCoinsCap, int *coin1, int *coin2, struct gameState *state)
+void findCoins(int *nonCoinsArray, int *coin1, int *coin2, struct gameState *state)
 {
   int i;
   int nonCoinsIndex = 0;
@@ -223,9 +235,13 @@ void findCoins(int *nonCoinsArray, int nonCoinsCap, int *coin1, int *coin2, stru
   *coin2 = -1;
   int nextCard;
   
-  for(i = 0; ((i < nonCoinsCap) && (*coin2 == -1)); i++)
+  int currentTurn = state->whoseTurn;
+  
+  i = state->deckCount[currentTurn];
+
+  while ((i >= 0) && (*coin2 == -1))
   {
-    nextCard = state->deck[state->whoseTurn][i];
+    nextCard = state->deck[currentTurn][i];
     if ((nextCard == copper) || (nextCard == silver) || (nextCard == gold))
     {
       if (*coin1 == -1)
@@ -242,8 +258,10 @@ void findCoins(int *nonCoinsArray, int nonCoinsCap, int *coin1, int *coin2, stru
       nonCoinsArray[nonCoinsIndex] = nextCard;
       nonCoinsIndex++;
     }
+	i--;
   }
   nonCoinsArray[nonCoinsIndex] = -1; //Sentinel Value for end of array
+
 }
 
 //Counts the number of coins of each type in the discard pile for the current player
@@ -329,7 +347,7 @@ void assertCoinDraw(int firstDraw, int secondDraw, int firstCoin, int secondCoin
 			}
 			*testFailed = 1;
         }
-      }
+    }
     if(copperCount < 0)
     {
 		if(DEBUGGING)
@@ -491,7 +509,7 @@ void assertDiscardSize(int expectedDiscardSize, struct gameState *state, int *te
   {
     printf("-----PASS: Player's discard size changed by correct number of cards!\n");
   }
-  
+
   if(*testFailed)
   {
 	  failArray[failIndex]++;
