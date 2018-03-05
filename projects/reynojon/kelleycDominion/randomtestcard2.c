@@ -100,8 +100,21 @@ int main() {
 			}
 		}
 
-		playSmithy(&G, G.whoseTurn, randHandPos);  //Playing the card directly bypasses end of turn actions and any check for the card's existence
 
+
+	  /************************************************
+	  * Code for my refactored council room
+	  ************************************************/
+		//playSmithy(&G, G.whoseTurn, randHandPos);  
+		//Playing the card directly bypasses end of turn actions and any check for the card's existence
+
+	  /************************************************
+	  * Code for Cody Kelley's refactored smithy
+	  ************************************************/
+	  int k;
+	  smithyEffect(k, G.whoseTurn, &G, randHandPos);
+		
+		
 		//AFTER PLAYING SMITHY
 
 		//Player should have 3 new cards in hand (possibly undeterminable ahead of time)
@@ -264,7 +277,7 @@ void assertSmithyDraw(int firstCard, int secondCard, int thirdCard, int firstDra
   {
 	if(DEBUGGING)
 	{
-		printf("-----FAILURE: First card drawn from Smithy was not first card in the deck!\n");
+		printf("-----FAILURE: First card expected %d, actual %d!\n", firstCard, firstDraw);
 	}
     *testFailed = 1;
   }
@@ -277,7 +290,7 @@ void assertSmithyDraw(int firstCard, int secondCard, int thirdCard, int firstDra
   {
 	if(DEBUGGING)
 	{
-		printf("-----FAILURE: Second card drawn from Smithy was not second card in the deck!\n");
+		printf("-----FAILURE: Second card expected %d, actual %d!\n", secondCard, secondDraw);
 	}
     *testFailed = 1;
   }
@@ -290,7 +303,7 @@ void assertSmithyDraw(int firstCard, int secondCard, int thirdCard, int firstDra
   {
 	if(DEBUGGING)
 	{
-		printf("-----FAILURE: Third card drawn from Smithy was not third card in the deck!\n");
+		printf("-----FAILURE: Third card expected %d, actual %d!\n", thirdCard, thirdDraw);
 	}
     *testFailed = 1;
   }
