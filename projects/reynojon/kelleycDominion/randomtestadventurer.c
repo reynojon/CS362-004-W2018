@@ -81,6 +81,10 @@ int main() {
       
       //Put an adventurer card in hand at a random position
       randHandPos = rand() % G.handCount[G.whoseTurn];
+	  if(DEBUGGING)
+	  {
+		  printf("Adventurer card in hand position: %d\n", randHandPos);
+	  }
       G.hand[G.whoseTurn][randHandPos] = adventurer;
     
       //Record values prior to playing Adventurer card
@@ -110,8 +114,22 @@ int main() {
         }
       }
 
-      playAdventurer(&G, G.whoseTurn);  //Playing the card directly bypasses end of turn actions and any check for the card's existence
+	  /************************************************
+	  * Code for my refactored adventurer
+	  ************************************************/
+	  //Playing the card directly bypasses end of turn actions and any check for the card's existence
+      //playAdventurer(&G, G.whoseTurn);  
 
+	  
+	  /************************************************
+	  * Code for Cody Kelley's refactored adventurer
+	  ************************************************/
+	  int drawnTreasure=0;
+	  int cardDrawn;
+	  int temphand[MAX_HAND];// moved above the if statement
+	  int z = 0;// this is the counter for the temp hand
+	  
+	  adventurerEffect(drawnTreasure, &G, G.whoseTurn, temphand, cardDrawn, z);
       //AFTER PLAYING ADVENTURER
 
       //Player should have 2 more coins in hand (possibly unknown ahead of time)
@@ -121,7 +139,11 @@ int main() {
       //Verify cards added to hand were actually coins and also available in the deck prior to draw
 	  testFailed = 0;
       assertCoinDraw(firstDraw, secondDraw, firstCoin, secondCoin, copperCount, silverCount, goldCount, &testFailed, failCount, 0);
-
+	  
+	  if(DEBUGGING)
+	  {
+		  printf("New card in adventurer's hand position: %d\n", G.hand[G.whoseTurn][randHandPos]);
+	  }
       //Verify the total number of cards available to the player did not change (except for adventurer being in played pile)
 	  testFailed = 0;
       assertCardCount(initialCardCount - 1, &G, &testFailed, failCount, 1);
@@ -223,9 +245,13 @@ void findCoins(int *nonCoinsArray, int nonCoinsCap, int *coin1, int *coin2, stru
   *coin2 = -1;
   int nextCard;
   
-  for(i = 0; ((i < nonCoinsCap) && (*coin2 == -1)); i++)
+  int currentTurn = state->whoseTurn;
+  
+  i = state->deckCount[currentTurn];
+
+  while ((i >= 0) && (*coin2 == -1))
   {
-    nextCard = state->deck[state->whoseTurn][i];
+    nextCard = state->deck[currentTurn][i];
     if ((nextCard == copper) || (nextCard == silver) || (nextCard == gold))
     {
       if (*coin1 == -1)
@@ -242,8 +268,10 @@ void findCoins(int *nonCoinsArray, int nonCoinsCap, int *coin1, int *coin2, stru
       nonCoinsArray[nonCoinsIndex] = nextCard;
       nonCoinsIndex++;
     }
+	i--;
   }
   nonCoinsArray[nonCoinsIndex] = -1; //Sentinel Value for end of array
+
 }
 
 //Counts the number of coins of each type in the discard pile for the current player
@@ -329,7 +357,7 @@ void assertCoinDraw(int firstDraw, int secondDraw, int firstCoin, int secondCoin
 			}
 			*testFailed = 1;
         }
-      }
+    }
     if(copperCount < 0)
     {
 		if(DEBUGGING)
@@ -491,7 +519,7 @@ void assertDiscardSize(int expectedDiscardSize, struct gameState *state, int *te
   {
     printf("-----PASS: Player's discard size changed by correct number of cards!\n");
   }
-  
+
   if(*testFailed)
   {
 	  failArray[failIndex]++;
