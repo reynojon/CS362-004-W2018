@@ -1,0 +1,97 @@
+## BUG 1 ##
+
+Title: Any other scheme besides http produces an error
+
+Class: "Serious Bug"
+
+Date: 03/15/2018
+Reported By: Pedro Torres-Mackie
+Email: torresmp@oregonstate.edu
+
+Product: UrlValidator                 Version: 1.0
+Platform: Mac OSX               Version: High Sierra
+
+Is it reproducible: Yes
+
+Description
+===========
+
+When testing a URL that has any scheme other than http, valid or invalid, the URLValidator throws an Exception that says 'Regular expressions are missing'
+
+Steps to Produce/Reproduce
+--------------------------
+
+1. Create a new UrlValidator instance with ALLOW_ALL_SCHEMES (i.e. UrlValidator urlVal = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES))
+2. Validate a URL with any scheme other than http via the isValid method (i.e. urlVal.isValid('ftp://www.ftp.com'))
+
+Expected Results
+----------------
+
+A URL with a valid scheme other than html (such as ftp) should produce a truthy return value, while a URL with an invalid scheme should produce a falsey return
+
+Actual Results
+--------------
+
+An error is being thrown that implies there are no regular expressions to test url schemes with
+
+Workarounds
+-----------
+
+Use only http URLs
+
+Other Information
+-----------------
+
+Both these tests should pass, but instead throw an error because of this bug:
+
+assertTrue(urlVal.isValid("ftp://255.com:80/test1/file?action=view"));
+assertFalse(urlVal.isValid("htitp://www.google.com"));
+
+
+## BUG 2 ##
+
+Title: An empty URL with the http scheme produces a 'valid' response
+
+Class: "Medium Priority"
+
+Date: 03/15/2018
+Reported By: Pedro Torres-Mackie
+Email: torresmp@oregonstate.edu
+
+Product: UrlValidator                 Version: 1.0
+Platform: Mac OSX               Version: High Sierra
+
+Is it reproducible: Yes
+
+Description
+===========
+
+An empty URL with the 'http' scheme (http://) should be marked as invalid, but the isValid method is marking it as valid.
+
+Steps to Produce/Reproduce
+--------------------------
+
+1. Create a new UrlValidator instance with ALLOW_ALL_SCHEMES (i.e. UrlValidator urlVal = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES))
+2. Validate the URL 'http://' via the isValid method (i.e. urlVal.isValid('http://'))
+
+Expected Results
+----------------
+
+The isValid method returns false because this is an invalid URL
+
+Actual Results
+--------------
+
+The isValid method returns true, implying it is a valid URL
+
+Workarounds
+-----------
+
+No easy workarounds, the isValid method will give an incorrect assessment every time
+
+Other Information
+-----------------
+
+The following test fails:
+
+assertFalse(urlVal.isValid("http://"))
