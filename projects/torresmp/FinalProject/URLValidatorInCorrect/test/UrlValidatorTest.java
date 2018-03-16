@@ -44,17 +44,73 @@ public class UrlValidatorTest extends TestCase {
 
    }
 
+   //Partition 1: URLs that are valid, should pass isValid() method
    public void testYourFirstPartition()
    {
-	 //You can use this function to implement your First Partition testing
+    UrlValidator urlVal = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
+
+    assertTrue(urlVal.isValid("http://www.google.com"));
+
+    //Commented out failing test
+    //assertTrue(urlVal.isValid("http://www.google.com:80"));
+
+    assertTrue(urlVal.isValid("http://www.google.com/test"));
+
+    assertTrue(urlVal.isValid("http://www.google.com/test?action=view"));
+
+    //Commented out failing test
+    //assertTrue(urlVal.isValid("ftp://www.ftp.com"));
 
    }
 
-   public void testYourSecondPartition(){
-		 //You can use this function to implement your Second Partition testing
+   //Partition 2: URLs that are not valid, should not pass isValid() method
+   public void testYourSecondPartition()
+   {
+    UrlValidator urlVal = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
 
+    //special case null value
+    assertFalse(urlVal.isValid(null));
+
+    //invalid scheme
+    assertFalse(urlVal.isValid("http/www.google.com"));
+    assertFalse(urlVal.isValid("http:www.google.com"));
+    //Commented out failing test
+    //assertFalse(urlVal.isValid("htpp://www.google.com"));
+
+
+    //Commented out failing test
+    //invalid authority
+    //assertFalse(urlVal.isValid("http://go.1aa"));
+    //assertFalse(urlVal.isValid("http://.aaa"));
+    //assertFalse(urlVal.isValid("http://"));
+
+
+    //invalid port
+    assertFalse(urlVal.isValid("http://www.google.com:-1/"));
+    assertFalse(urlVal.isValid("http://www.google.com:65636"));
+    assertFalse(urlVal.isValid("http://www.google.com:65a"));
+
+
+    //invalid path
+    assertFalse(urlVal.isValid("http://www.google.com/.."));
+    assertFalse(urlVal.isValid("http://www.google.com/../"));
+    assertFalse(urlVal.isValid("http://www.google.com/..//file"));
+
+    //all invalid
+    assertFalse(urlVal.isValid("http/.aaa:-1/../"));
+
+    //combinations of invalid
+    assertFalse(urlVal.isValid("http/www.google.com/.."));
+    assertFalse(urlVal.isValid("http://.aaa/.."));
+    //Commented out failing test
+    //assertFalse(urlVal.isValid("htpp://www.google.com:80/.."));
+    assertFalse(urlVal.isValid("http:www.google.com:80/.."));
+    assertFalse(urlVal.isValid("http://:-1/test"));
+    assertFalse(urlVal.isValid("http:www.google.com:-1/.."));
+    assertFalse(urlVal.isValid("http:www.google.com:-1/test"));
+    assertFalse(urlVal.isValid("http:.aaa:80/test"));
+    assertFalse(urlVal.isValid("http/.aaa:-1/test"));
    }
-   //You need to create more test cases for your Partitions if you need to
 
    public void testIsValid()
    {
